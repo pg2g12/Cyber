@@ -21,7 +21,7 @@ class User extends Controller {
 				StatusMessage::add('User already exists','danger');
 			} else if($password != $password2) {
 				StatusMessage::add('Passwords must match','danger');
-			} else {
+			} else if ($captcha == $_SESSION['captcha_code']) {
 				$user = $this->Model->Users;
 				$user->copyfrom('POST');
 				$user->created = mydate();
@@ -33,6 +33,8 @@ class User extends Controller {
 				$user->save();	
 				StatusMessage::add('Registration complete','success');
 				return $f3->reroute('/user/login');
+			} else {
+				StatusMessage::add('Captcha does not match, please try again','danger');
 			}
 		}
 	}
