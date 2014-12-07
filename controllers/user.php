@@ -24,6 +24,7 @@ class User extends Controller {
 			} else if ($captcha == $_SESSION['captcha_code']) {
 				$user = $this->Model->Users;
 				$user->copyfrom('POST');
+				$user->password = sha1($user->password);
 				$user->created = mydate();
 				$user->bio = '';
 				$user->level = 1;
@@ -42,7 +43,7 @@ class User extends Controller {
 	public function login($f3) {
 		if ($this->request->is('post')) {
 			list($username,$password) = array($this->request->data['username'],$this->request->data['password']);
-			if ($this->Auth->login($username,$password)) {
+			if ($this->Auth->login($username, sha1($password))) {
 				StatusMessage::add('Logged in succesfully','success');
 			
 				if(isset($_GET['from'])) {
@@ -70,6 +71,7 @@ class User extends Controller {
 		$oldpass = $u->password;
 		if($this->request->is('post')) {
 			$u->copyfrom('POST');
+			$u->password = sha1($u->password); //encrypt password using sha1
 			if(empty($u->password)) { $u->password = $oldpass; }
 
 			//Handle avatar upload
