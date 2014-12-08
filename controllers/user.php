@@ -70,9 +70,9 @@ class User extends Controller {
 		$u = $this->Model->Users->fetch($id);
 		$oldpass = $u->password;
 		if($this->request->is('post')) {
-			$u->copyfrom('POST');
-			$u->password = sha1($u->password); //encrypt password using sha1
+			$u->copyfrom('POST'); 
 			if(empty($u->password)) { $u->password = $oldpass; }
+			else { $u->password = sha1($u->password); } //Encrypt password using sha1
 
 			//Handle avatar upload
 			if(isset($_FILES['avatar']) && isset($_FILES['avatar']['tmp_name']) && !empty($_FILES['avatar']['tmp_name'])) {
