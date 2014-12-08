@@ -68,22 +68,26 @@ class User extends Controller {
 		$id = $this->Auth->user('id');
 		extract($this->request->data);
 		$u = $this->Model->Users->fetch($id);
-		$oldpass = $u->password;
 		if($this->request->is('post')) {
-			$u->copyfrom('POST'); 
-			if(empty($u->password)) { $u->password = $oldpass; }
-			else { $u->password = sha1($u->password); } //Encrypt password using sha1
-
+			$u->copyfrom('POST');
+			$u->password = sha1($u->password); //encrypt password using sha1
 			//Handle avatar upload
-			if(isset($_FILES['avatar']) && isset($_FILES['avatar']['tmp_name']) && !empty($_FILES['avatar']['tmp_name'])) {
+			$mime = \Web::instance()->mime($_FILES['avatar']['name']); //Stores file mime type
+			$type = $_FILES['avatar']['type']; //Stores submitted file extension
+			$mess = 'Internal Error 800084x000fe3355 - something went wrong!'; //Helpfull error message...
+			if(isset($_FILES['avatar']) && isset($_FILES['avatar']['tmp_name']) && !empty($_FILES['avatar']['tmp_name']) && $mime == 'image/jpeg' && $type === 'image/jpeg' ) {
 				$url = File::Upload($_FILES['avatar']);
 				$u->avatar = $url;
+				$mess = 'Image uploaded sucesfully';
 			} else if(isset($reset)) {
 				$u->avatar = '';
+				$mess = 'Image reset';
+			} else {
+				$mess = 'Profile has been updated';
 			}
-
+			
 			$u->save();
-			\StatusMessage::add('Profile updated succesfully','success');
+			\StatusMessage::add($mess /*'Profile updated succesfully'*/,'success');
 			return $f3->reroute('/user/profile');
 		}			
 		$_POST = $u->cast();
