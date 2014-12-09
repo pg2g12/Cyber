@@ -68,32 +68,35 @@ class User extends Controller {
 		$id = $this->Auth->user('id');
 		extract($this->request->data);
 		$u = $this->Model->Users->fetch($id);
+		$oldpass = $u->password;
 		if($this->request->is('post')) {
 			$u->copyfrom('POST');
-			$u->password = sha1($u->password); //encrypt password using sha1
+			if(empty($u->password)) { 
+				$u->password = $oldpass; 
+			}
+			else { 
+			$u->password = sha1($u->password); //Encrypt password using sha1
+			}
+
 			//Handle avatar upload
-			$mime = \Web::instance()->mime($_FILES['avatar']['name']); //Stores file mime type
-			$type = $_FILES['avatar']['type']; //Stores submitted file extension
-			$types = array("image/gif",
-						    "image/png",
-						    "image/jpeg",);
-			$mess = 'Internal Error 800084x000fe3355 - something went wrong!'; //Helpfull error message...
-			if(isset($_FILES['avatar']) && isset($_FILES['avatar']['tmp_name']) && in_array($type, $types) && in_array($mime, $types)) {
-				$_FILES['avatar']['name'] = uniqid(rand(), true).'.'.preg_replace('/^.+[\\\\\\/]/', '', $mime);
+			if(isset($_FILES['avatar']) && isset($_FILES['avatar']['tmp_name']) && !empty($_FILES['avatar']['tmp_name'])) {
 				$url = File::Upload($_FILES['avatar']);
-				$u->avatar = $url;
-				$directory = getcwd() .  $url; //gets ultimate path need by chmod (derived from utility/files.php)
-				chmod($directory, 0755);
-				$mess = 'Where the unicorns at?! we want ROB!!!!!!';
+				if (!$url){
+					$fail  = '';
+					\StatusMessage::add('Profile update failed (Check image type is correct)','danger');
+				}else{
+					$u->avatar = $url;
+				}
+				
 			} else if(isset($reset)) {
 				$u->avatar = '';
-				$mess = 'Image reset';
-			} else {
-				$mess = 'Profile has been updated';
 			}
 			
 			$u->save();
-			\StatusMessage::add($mess /*'Profile updated succesfully'*/,'success');
+			if(!isset($fail)){
+				\StatusMessage::add('Profile updated sucesfully','success');
+			}
+			
 			return $f3->reroute('/user/profile');
 		}			
 		$_POST = $u->cast();

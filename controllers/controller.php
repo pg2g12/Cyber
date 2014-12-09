@@ -42,11 +42,11 @@ class Controller {
 			$f3->process($beforeCode);
 		}
 		if($this->request->is('post')){
-			if($_SESSION['token'] == $this->request->data['my_token']){
+			if(isset($_SESSION['token']) && isset($this->request->data['my_token']) && $_SESSION['token'] == $this->request->data['my_token']){
 				$_SESSION['token'] = '';
 			}
 			else{
-				\StatusMessage::add('<b> Error 0989779xhf89fe08h - why you csrf me bro?! </b> <br/> seriously, if this was not your fault contact Rob','danger');
+				\StatusMessage::add('<b> Error 0989779xhf89fe08h - CSRF detected </b> <br/> If this was not your fault contact Rob','danger');
 				$f3->reroute('/');
 			}
 		}
