@@ -7,8 +7,11 @@ class Form {
 
 	public function start($options=array()) {
 		$action = isset($options['action']) ? $options['action'] : '';
+		$my_token = uniqid(rand(), true);
+		$_SESSION['token'] = $my_token;
 		$enctype = (isset($options['type']) && $options['type'] == 'file') ? 'enctype="multipart/form-data"' : ''; //Handle file uploads
-		return '<form role="form" method="post" action="'.$action.'" '.$enctype.'>';	
+		return '<form role="form" method="post" action="'.$action.'" '.$enctype.'>
+				<input type="hidden" name="my_token" value="'.$my_token.'">';	
 	}
 
 	public function file($options) {
