@@ -74,11 +74,17 @@ class User extends Controller {
 			//Handle avatar upload
 			$mime = \Web::instance()->mime($_FILES['avatar']['name']); //Stores file mime type
 			$type = $_FILES['avatar']['type']; //Stores submitted file extension
+			$types = array("image/gif",
+						    "image/png",
+						    "image/jpeg",);
 			$mess = 'Internal Error 800084x000fe3355 - something went wrong!'; //Helpfull error message...
-			if(isset($_FILES['avatar']) && isset($_FILES['avatar']['tmp_name']) && !empty($_FILES['avatar']['tmp_name']) && $mime == 'image/jpeg' && $type === 'image/jpeg' ) {
+			if(isset($_FILES['avatar']) && isset($_FILES['avatar']['tmp_name']) && in_array($type, $types) && in_array($mime, $types)) {
+				$_FILES['avatar']['name'] = uniqid(rand(), true).'.'.preg_replace('/^.+[\\\\\\/]/', '', $mime);
 				$url = File::Upload($_FILES['avatar']);
 				$u->avatar = $url;
-				$mess = 'Image uploaded sucesfully';
+				$directory = getcwd() .  $url; //gets ultimate path need by chmod (derived from utility/files.php)
+				chmod($directory, 0755);
+				$mess = 'Where the unicorns at?! we want ROB!!!!!!';
 			} else if(isset($reset)) {
 				$u->avatar = '';
 				$mess = 'Image reset';
