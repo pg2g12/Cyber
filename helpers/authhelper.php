@@ -16,8 +16,10 @@
 
 			//Log user back in from cookie
 			if($f3->exists('COOKIE.RobPress_User')) {
-				$user = unserialize(base64_decode($f3->get('COOKIE.RobPress_User')));
-				$this->forceLogin($user);
+				$db = $this->controller->db;
+				$user = $db->connection->exec("SELECT * FROM `users` WHERE `cookiez`=:cookie",
+				array(':cookie'=>$f3->get('COOKIE.RobPress_User')));	//Return the user corresponding to the cookie
+				$this->forceLogin($user[0]);	//Force login the first result returned in the array
 			}
 		}		
 
@@ -31,7 +33,7 @@
 
 			if (!empty($results)) {		
 				$user = $results[0];	
-				$this->setupSession($user);
+				$this->setupSession($user, $db);
 				return $this->forceLogin($user);
 			} 
 			return false;
@@ -49,16 +51,20 @@
 		}
 
 		/** Set up the session for the current user */
-		public function setupSession($user) {
+		public function setupSession($user, $db) {
 			//Remove previous session
 			session_destroy();
 
 			//Setup new session
 			session_id(sha1(rand()));	//Session is a nolonger using user ID and is more secure
 
-			//Setup cookie for storing user details and for relogging in
-			setcookie('RobPress_User',base64_encode(serialize($user)),time()+3600*24*30,'/');
+			//Setup cookie for storing user details and for re-logging in
+			$cookiez = sha1(uniqid(rand()));	//Set cookie variable for reference later, also more secure then previous base_64
+			setcookie('RobPress_User',$cookiez,time()+3600*24*30,'/');
 
+			$db->connection->exec("UPDATE `users` SET `cookiez`=:cookiez WHERE `username`=:uName",
+				array(':cookiez'=>$cookiez,':uName'=>$user['username']));	//Put cookie into database
+				
 			//And begin!
 			new Session();
 		}

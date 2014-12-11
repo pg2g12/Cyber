@@ -14,7 +14,12 @@
 		public function delete($f3) {
 			$postid = $f3->get('PARAMS.3');
 			$post = $this->Model->Posts->fetchById($postid);
-			$post->erase();
+			$post->erase();		//This previously caused a bug when comments were deleted
+			$comments = $this->Model->Comments->fetchAll(array('blog_id' => $postid));	
+			foreach($comments as $com){
+				//Needed to ensure comments are deleted properly
+				$com->erase();	
+			}														
 
 			//Remove from categories
 			$cats = $this->Model->Post_Categories->fetchAll(array('post_id' => $postid));
