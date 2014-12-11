@@ -18,7 +18,7 @@ class Page extends Controller {
 		}
 		
 	}
-
+	
 }
 
 ?>

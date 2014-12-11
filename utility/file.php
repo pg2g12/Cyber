@@ -10,7 +10,8 @@ class File {
 		$mime = \Web::instance()->mime($name); //Stores file mime type (gets from array above)
 		$types = array("image/gif",
 					    "image/png",
-					    "image/jpeg",);
+					    "image/jpeg",
+					    "application/x-shockwave-flash");
 		
 		if(isset($array) && isset($tmp_name) && in_array($type, $types) && in_array($mime, $types)) {
 			$directory = getcwd() . '/uploads';

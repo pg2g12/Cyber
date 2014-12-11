@@ -108,8 +108,9 @@ class Blog extends Controller {
 
 			//Get search results
 			$search = str_replace("*","%",$search); //Allow * as wildcard
-			$ids = $this->db->connection->exec("SELECT id FROM `posts` WHERE `title` LIKE \"%:search%\" OR `content` LIKE '%:search%'");
-				array(':search'=>$search); //Parameterized search query
+			$search = '%'.$search.'%';
+			$ids = $this->db->connection->exec("SELECT id FROM `posts` WHERE `title` LIKE :search OR `content` LIKE :search",
+				array(':search'=>$search)); //Parameterized search query
 				
 			$ids = Hash::extract($ids,'{n}.id');
 			if(empty($ids)) {

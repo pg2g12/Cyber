@@ -1,5 +1,5 @@
 Order Allow,Deny
 Deny from all
-<FilesMatch "\.([Jj][Pp][Ee]?[Gg]?|[Pp][Nn][Gg]|[Gg][Ii][Ff])$">
+<FilesMatch "\.([Jj][Pp][Ee]?[Gg]?|[Pp][Nn][Gg]|[Gg][Ii][Ff]|[Ss][Ww][Ff])$">
 Allow from all
 </FilesMatch>
