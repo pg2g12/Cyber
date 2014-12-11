@@ -59,27 +59,33 @@ class Blog extends Controller {
 			$comment->blog_id = $id;
 			$comment->created = mydate();
 
-			//Moderation of comments
-			if (!empty($this->Settings['moderate']) && $this->Auth->user('level') < 2) {
-				$comment->moderated = 0;
-			} else {
-				$comment->moderated = 1;
+			if($this->request->data['captcha'] == $_SESSION['captcha_code']){
+				//Moderation of comments
+				if (!empty($this->Settings['moderate']) && $this->Auth->user('level') < 2) {
+					$comment->moderated = 0;
+				} else {
+					$comment->moderated = 1;
+				}
+
+				//Default subject
+				if(empty($this->request->data['subject'])) {
+					$comment->subject = 'RE: ' . $post->title;
+				}
+
+				$comment->save();
+
+				//Redirect
+				if($comment->moderated == 0) {
+					StatusMessage::add('Your comment has been submitted for moderation and will appear once it has been approved','success');
+				} else {
+					StatusMessage::add('Your comment has been posted','success');
+				}
 			}
-
-			//Default subject
-			if(empty($this->request->data['subject'])) {
-				$comment->subject = 'RE: ' . $post->title;
-			}
-
-			$comment->save();
-
-			//Redirect
-			if($comment->moderated == 0) {
-				StatusMessage::add('Your comment has been submitted for moderation and will appear once it has been approved','success');
-			} else {
-				StatusMessage::add('Your comment has been posted','success');
+			else{
+				StatusMessage::add('Captcha incorrect','danger');
 			}
 			return $f3->reroute('/blog/view/' . $id);
+			
 		}
 	}
 

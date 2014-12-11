@@ -8,6 +8,11 @@
 	echo $form->start();
 	echo $form->add('username');
 	echo $form->add('password',array('type' => 'password','value' => ''));
+	echo $form->add('captcha');
+	$img = new Image();
+	$img->captcha('Fonts/arial.ttf',16,5,'SESSION.captcha_code');
+	echo '<img src="data:image/png;base64,'. base64_encode($img->dump()) . '" />';
+	echo '<hr/>';
 	echo $form->add('Login',array('type' => 'submit'));
 	echo $form->end();
 ?>

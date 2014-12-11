@@ -12,10 +12,15 @@ class Page extends AdminController {
 	public function add($f3) {
 		if($this->request->is('post')) {
 			$pagename = strtolower(str_replace(" ","_",$this->request->data['title']));
-			$this->Model->Pages->create($pagename);
-		
-			\StatusMessage::add('Page created succesfully','success');
-			return $f3->reroute('/admin/page/edit/' . $pagename);
+			$pagename = preg_replace('/[^a-zA-Z0-9_ %\[\]\.\(\)/\//%&-]/s', '', $pagename);	//Remove special characters from pages created
+			if (!empty($pagename)) {
+				$this->Model->Pages->create($pagename);
+				\StatusMessage::add('Page created succesfully','success');
+				return $f3->reroute('/admin/page/edit/' . $pagename);
+			} else {
+				\StatusMessage::add('Page could not be created','danger');	//Prevents pages with no name
+				$f3->reroute('/admin/page');
+			}
 		}
 	}
 

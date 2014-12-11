@@ -15,7 +15,7 @@ RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization},L]
 
 Options -Indexes
 
-<Files ~ "\.(inc|sql|cfg|swo|htm|html|js|json|sh|tff|bak)$">
+<Files ~ "\.(inc|sql|cfg|swo|json|sh|tff|bak)$">
   order allow,deny
   deny from all
 </Files>

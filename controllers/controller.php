@@ -41,10 +41,13 @@ class Controller {
 		if(isset($beforeCode)) {
 			$f3->process($beforeCode);
 		}
+
 		if($this->request->is('post')){
+
+
 			if(isset($_SESSION['token']) && isset($this->request->data['my_token']) && $_SESSION['token'] == $this->request->data['my_token']){
 				//Define allowed tags
-				$whitelist = 'h1,p,b,em,u,h2,h3,h4,bold,img,ol,ul,strong,blockquote,div,span,backquote,sup,sub';
+				$whitelist = 'h1,p,b,em,u,h2,h3,h4,bold,img,ol,ul,strong,blockquote,div,span,backquote,sup,sub,a';
 				//Clean data to protect against XSS
 				$this->request->data = $f3->clean($this->request->data, $whitelist); //Data from request (model)
 				$f3->set('POST', $f3->clean($f3->get('POST'), $whitelist));	//Data from f3 global variables

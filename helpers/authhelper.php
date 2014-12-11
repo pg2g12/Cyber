@@ -54,7 +54,7 @@
 			session_destroy();
 
 			//Setup new session
-			session_id(md5($user['id']));
+			session_id(sha1(rand()));	//Session is a nolonger using user ID and is more secure
 
 			//Setup cookie for storing user details and for relogging in
 			setcookie('RobPress_User',base64_encode(serialize($user)),time()+3600*24*30,'/');

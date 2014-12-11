@@ -43,16 +43,20 @@ class User extends Controller {
 	public function login($f3) {
 		if ($this->request->is('post')) {
 			list($username,$password) = array($this->request->data['username'],$this->request->data['password']);
-			if ($this->Auth->login($username, sha1($password))) {
-				StatusMessage::add('Logged in succesfully','success');
-			
-				if(isset($_GET['from'])) {
-					$f3->reroute($_GET['from']);
+			if ($this->request->data['captcha'] == $_SESSION['captcha_code']) {
+				if ($this->Auth->login($username, sha1($password))) {
+					StatusMessage::add('Logged in succesfully','success');
+					$loc = preg_replace('/[^a-zA-Z0-9\/\-]/', '', $_GET['from']);	//Filter to add protection from open redirects
+					if(isset($loc)) {
+						$f3->reroute($loc);
+					} else {
+						$f3->reroute('/');
+					}
 				} else {
-					$f3->reroute('/');	
+					StatusMessage::add('Incorrect username or password','danger');
 				}
 			} else {
-				StatusMessage::add('Invalid username or password','danger');
+				StatusMessage::add('Invalid captcha','danger');
 			}
 		}		
 	}

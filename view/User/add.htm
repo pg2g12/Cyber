@@ -13,13 +13,13 @@
 	echo $form->add('password',array('type' => 'password','value' => ''));
 	echo $form->add('password2',array('type' => 'password','value' => '', 'label' => 'Confirm Password'));
 	echo $form->add('captcha');
-	echo '<hr/>';
-	echo $form->add('Register',array('type' => 'submit'));
 	$img = new Image();
 	$img->captcha('Fonts/arial.ttf',16,5,'SESSION.captcha_code');
+	echo '<img src="data:image/png;base64,'. base64_encode($img->dump()) . '" />';
+	echo '<hr/>';
+	echo $form->add('Register',array('type' => 'submit'));
 	echo $form->end();
 ?>
-<img src="data:image/png;base64,<?= base64_encode($img->dump()); ?>" />
 <hr/>
 <p>Already have an account? Just <a href="<?=$site['base']?>/user/login">Login</a>
 
