@@ -9,7 +9,7 @@ class Contact extends Controller {
 			if (filter_var($from, FILTER_VALIDATE_EMAIL)) {
 
 			$from = "From: $from";
-			mail($to,$subject,$message,$from);
+			mail('root@localhost',$subject,$message,$from);
 			StatusMessage::add('Thank you for contacting us');
 
 			} else {

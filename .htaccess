@@ -12,3 +12,10 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule .* %{ENV:BASE}/index.php [L,QSA]
 RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization},L]
+
+Options -Indexes
+
+<Files ~ "\.(inc|sql|cfg|swo|htm|html|js|json|sh|tff|bak)$">
+  order allow,deny
+  deny from all
+</Files>

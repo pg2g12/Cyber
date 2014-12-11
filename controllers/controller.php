@@ -43,10 +43,15 @@ class Controller {
 		}
 		if($this->request->is('post')){
 			if(isset($_SESSION['token']) && isset($this->request->data['my_token']) && $_SESSION['token'] == $this->request->data['my_token']){
+				//Define allowed tags
+				$whitelist = 'h1,p,b,em,u,h2,h3,h4,bold,img,ol,ul,strong,blockquote,div,span,backquote,sup,sub';
+				//Clean data to protect against XSS
+				$this->request->data = $f3->clean($this->request->data, $whitelist); //Data from request (model)
+				$f3->set('POST', $f3->clean($f3->get('POST'), $whitelist));	//Data from f3 global variables
 				$_SESSION['token'] = '';
-			}
-			else{
-				\StatusMessage::add('<b> Error 0989779xhf89fe08h - CSRF detected </b> <br/> If this was not your fault contact Rob','danger');
+			}else{
+				//CSRF or general form failure - displayed if token is incorrect or not present
+				\StatusMessage::add('An error was encountered when submitting the form','danger');
 				$f3->reroute('/');
 			}
 		}
