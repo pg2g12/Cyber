@@ -22,18 +22,28 @@ class User extends Controller {
 			} else if($password != $password2) {
 				StatusMessage::add('Passwords must match','danger');
 			} else if ($captcha == $_SESSION['captcha_code']) {
-				$user = $this->Model->Users;
-				$user->copyfrom('POST');
-				$user->password = sha1($user->password);
-				$user->created = mydate();
-				$user->bio = '';
-				$user->level = 1;
-				if(empty($displayname)) {
-					$user->displayname = $user->username;
+
+					$user = $this->Model->Users;
+					$user->copyfrom('POST');
+ 				if (!preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z]{8,12}$/', $user->password)) {	//Ensures more secure passwords
+				  	StatusMessage::add('Passwords is insecure - Please ensure complexity requirements are met.','danger');
+				 }else if (empty($user->username)) {	//Checks for blank usernames
+				 	StatusMessage::add('Please enter a desired username','danger');
+				 } else {
+				 	//create account
+					$user->password = sha1($user->password);
+					$user->created = mydate();
+					$user->bio = '';
+					$user->level = 1;
+					if(empty($displayname)) {
+						$user->displayname = $user->username;
+					}
+					$user->save();	
+					StatusMessage::add('Registration complete','success');
+					return $f3->reroute('/user/login');
+
 				}
-				$user->save();	
-				StatusMessage::add('Registration complete','success');
-				return $f3->reroute('/user/login');
+				
 			} else {
 				StatusMessage::add('Captcha does not match, please try again','danger');
 			}

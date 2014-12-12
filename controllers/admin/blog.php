@@ -18,7 +18,7 @@
 			$comments = $this->Model->Comments->fetchAll(array('blog_id' => $postid));	
 			foreach($comments as $com){
 				//Needed to ensure comments are deleted properly
-				$com->erase();	
+				$com->erase();
 			}														
 
 			//Remove from categories

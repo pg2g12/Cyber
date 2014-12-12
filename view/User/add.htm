@@ -9,7 +9,9 @@
 	echo $form->add('username');
 	echo $form->add('displayname',array('label' => 'Display Name'));
 	echo $form->add('email');
-	echo '<hr/>';
+	echo '<br/>';
+	echo 'Password requirements:';
+	echo '<br/>8-12 characters in length and have atleast 1 of each of the following: Uppercase, Lowercase, Number';
 	echo $form->add('password',array('type' => 'password','value' => ''));
 	echo $form->add('password2',array('type' => 'password','value' => '', 'label' => 'Confirm Password'));
 	echo $form->add('captcha');
